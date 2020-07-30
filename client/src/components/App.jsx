@@ -9,8 +9,8 @@ class App extends Component {
   }
 
   render() {
-    return (
-      <div>React is working</div>
-    )
+    return <div>React is working!</div>
   }
 }
+
+export default App;

@@ -1,4 +1,4 @@
-const path require('path');
+const path = require('path');
 
 const SRC_DIR = path.resolve(__dirname, "client", "src");
 const SRC_FILE = path.resolve(SRC_DIR, "index.js");
@@ -13,12 +13,12 @@ module.exports={
   module: {
     rules: [
       {
-        test: /\.m?js$/,
+        test: /\.m?(js|jsx)$/,
         exclude: /(node_modules|bower_components)/,
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env']
+            presets: ['@babel/preset-env', '@babel/preset-react']
           }
         }
       }
