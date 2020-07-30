@@ -12,6 +12,6 @@ app.use(morgan('dev'));
 app.use(bodyParser.json());
 
 //Static files
-app.use(app.static(STATIC_DIR));
+app.use(express.static(STATIC_DIR));
 
 module.exports = app;
