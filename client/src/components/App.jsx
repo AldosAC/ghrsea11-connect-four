@@ -9,7 +9,9 @@ class App extends Component {
     super(props)
     this.state = {
       board: gameBoard.board,
-      winner: false
+      winner: false,
+      tie: false,
+      playCounter: 0
     }
     this.onClickHandler = this.onClickHandler.bind(this);
   }
@@ -18,12 +20,23 @@ class App extends Component {
     let x = event.target.getAttribute('x');
     let piecePos = { x: x };
     let col = gameBoard.getColumn(x);
-    piecePos.y = gameBoard.togglePiece(col);
-    gameBoard.toggleTokenColor();
-    this.setState({ board: gameBoard.board})
-    if(gameBoard.checkWinner(piecePos)) {
-      this.setState({ winner: true });
+    let newState = {};
+
+    piecePos.y = gameBoard.placePiece(col);
+    if (piecePos.y === -1) { //unable to place piece
+      return; 
     }
+    newState.board = gameBoard.board;
+    newState.playCounter = this.state.playCounter + 1;
+    if (newState.playCounter === 64) {
+      newState.tie = true;
+    }
+
+    if(gameBoard.checkWinner(piecePos)) {
+      newState.winner = true;
+    }
+
+    this.setState(newState);
   }
 
   renderBoard() {
@@ -53,12 +66,19 @@ class App extends Component {
   }
 
   render() {
-    let { winner } = this.state;
+    let { winner, tie } = this.state;
 
     if(winner) {
       return (
         <div>
           <h1>MATCH FOUR!  GAME OVER!</h1>
+          {this.renderBoard()}
+        </div>
+      )
+    } else if (tie) {
+      return (
+        <div>
+          <h1>TIE GAME!  GAME OVER!</h1>
           {this.renderBoard()}
         </div>
       )

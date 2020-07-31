@@ -12,7 +12,7 @@ class Board {
       col7: {0:'white', 1:'white', 2:'white', 3:'white', 4:'white', 5:'white', 6:'white', 7:'white'},
     }
     this.nextPiece = 'red'
-    this.togglePiece = this.togglePiece.bind(this);
+    this.placePiece = this.placePiece.bind(this);
     this.checkHorizontalMatch = this.checkHorizontalMatch.bind(this);
   }
 
@@ -35,16 +35,16 @@ class Board {
   checkVertMatch(col) {
     let count = 0;
     let lastSpace = undefined;
-    for (let key in col) {
+    for (let row in col) {
       if (!lastSpace) {
         count = 1;
-        lastSpace = col[key];
-      } else if (col[key] !== 'white' && col[key] === lastSpace) {
+        lastSpace = col[row];
+      } else if (col[row] !== 'white' && col[row] === lastSpace) {
         count++;
-        lastSpace = col[key]
+        lastSpace = col[row]
       } else {
         count = 1;
-        lastSpace = col[key]
+        lastSpace = col[row]
       }
       if (count > 3) {
         console.log("Winner!");
@@ -135,12 +135,9 @@ class Board {
       return (num >= 0 && num < 8);
     }
 
-    console.log(`Col: ${startCol}, Row: ${row}`)
-
     for (let i = startCol; i >= 0; i--, row++) {
       let col = `col${i}`;
       let currentSpace = this.board[col][row]
-      console.log(`Col: ${i}, Row: ${row}`)
 
       if(!inBounds(row)) {
         return false;
@@ -166,22 +163,25 @@ class Board {
     return false;
   }
 
-  togglePiece(col) {
-    console.log(`.togglePiece col: ${JSON.stringify(col)}`);
+  placePiece(col) {
     let token = this.nextPiece;
-    for (let key in col) {
-      if(col[key] !== 'white') {
-        console.log(`Toggling key ${key}`);
-        let tokenPos = key - 1;
+    let tokenPos = undefined;
+    for (let row in col) {
+      if(col[row] !== 'white') {
+        tokenPos = row - 1;
         col[tokenPos] = token;
-        return tokenPos;
-      } else if (key === '7') {
-        console.log(`Toggling last key: ${key}`);
-        let tokenPos = key
+        break;
+      } else if (row === '7') {
+        tokenPos = row
         col[tokenPos] = token;
-        return tokenPos;
+        break;
       }
     }
+    if(tokenPos !== -1) {
+      this.toggleTokenColor();
+    }
+    
+    return tokenPos;
   } 
 
   toggleTokenColor() {
