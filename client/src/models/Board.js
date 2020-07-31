@@ -34,6 +34,7 @@ class Board {
     let lastSpace = undefined;
     for (let key in col) {
       if (!lastSpace) {
+        count = 1;
         lastSpace = col[key];
       } else if (col[key] !== 'white' && col[key] === lastSpace) {
         count++;
@@ -52,16 +53,21 @@ class Board {
 
   checkHorizontalMatch(row) {
     let count = 0;
+    let lastSpace = undefined;
 
     for (let i = 0; i < 8; i++) {
+      let col = `col${i}`;
+      console.log(col);
+      let currentSpace = this.board[col][row]
       if (!lastSpace) {
-        lastSpace = col[key];
-      } else if (col[key] !== 'white' && col[key] === lastSpace) {
+        count = 1;
+        lastSpace = currentSpace;
+      } else if (currentSpace !== 'white' && currentSpace === lastSpace) {
         count++;
-        lastSpace = col[key]
+        lastSpace = currentSpace
       } else {
         count = 1;
-        lastSpace = col[key]
+        lastSpace = currentSpace
       }
       if (count > 3) {
         console.log("Winner!");
