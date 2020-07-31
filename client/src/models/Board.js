@@ -20,9 +20,12 @@ class Board {
     let { x, y } = piecePos;
     let col = this.getColumn(x);
 
-    if(this.checkVertMatch(col)) {
-      return true;
-    } else if(this.checkHorizontalMatch(y)) {
+    if(
+      this.checkVertMatch(col) ||
+      this.checkHorizontalMatch(y) ||
+      this.checkMajorDiagMatch(piecePos) ||
+      this.checkMinorDiagMatch(piecePos)
+    ) {
       return true;
     } else {
       return false;
@@ -57,7 +60,6 @@ class Board {
 
     for (let i = 0; i < 8; i++) {
       let col = `col${i}`;
-      console.log(col);
       let currentSpace = this.board[col][row]
       if (!lastSpace) {
         count = 1;
@@ -74,6 +76,93 @@ class Board {
         return true;
       }
     }
+    return false;
+  }
+
+  checkMajorDiagMatch(piecePos) {
+    let { x, y }  = piecePos;
+    let startCol = x - y;
+    let row = y - x;
+    let lastSpace = undefined;
+    let count = 0;
+
+    let inBounds = (num) => {
+      return (num >= 0 && num < 8);
+    }
+
+    if (startCol < 0) {
+      startCol = 0;
+    }
+
+    for (let i = startCol; i < 8; i++, row++) {
+      let col = `col${i}`;
+      let currentSpace = this.board[col][row]
+
+      if(!inBounds(row)) {
+        return false;
+      }
+
+      if (!lastSpace) {
+        count = 1;
+        lastSpace = currentSpace;
+      } else if (currentSpace !== 'white' && currentSpace === lastSpace) {
+        count++;
+        lastSpace = currentSpace
+      } else {
+        count = 1;
+        lastSpace = currentSpace
+      }
+      if (count > 3) {
+        console.log("Winner!");
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  checkMinorDiagMatch(piecePos) {
+    let { x, y }  = piecePos;
+    let startCol = Number(x + y);
+    if (startCol > 7) {
+      startCol = 7;
+    }
+    let row = y - (startCol - x);
+    let lastSpace = undefined;
+    let count = 0;
+
+    let inBounds = (num) => {
+      return (num >= 0 && num < 8);
+    }
+
+    console.log(`Col: ${startCol}, Row: ${row}`)
+
+    for (let i = startCol; i >= 0; i--, row++) {
+      let col = `col${i}`;
+      let currentSpace = this.board[col][row]
+      console.log(`Col: ${i}, Row: ${row}`)
+
+      if(!inBounds(row)) {
+        return false;
+      }
+
+      if (!lastSpace) {
+        count = 1;
+        lastSpace = currentSpace;
+      } else if (currentSpace !== 'white' && currentSpace === lastSpace) {
+        count++;
+        lastSpace = currentSpace
+      } else {
+        count = 1;
+        lastSpace = currentSpace
+      }
+      if (count > 3) {
+        console.log("Winner!");
+        return true;
+      }
+    }
+
+
     return false;
   }
 
