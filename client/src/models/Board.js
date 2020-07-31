@@ -13,21 +13,78 @@ class Board {
     }
     this.nextPiece = 'red'
     this.togglePiece = this.togglePiece.bind(this);
+    this.checkHorizontalMatch = this.checkHorizontalMatch.bind(this);
   }
 
-  togglePiece(x) {
+  checkWinner(piecePos) {
+    let { x, y } = piecePos;
     let col = this.getColumn(x);
+
+    if(this.checkVertMatch(col)) {
+      return true;
+    } else if(this.checkHorizontalMatch(y)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  checkVertMatch(col) {
+    let count = 0;
+    let lastSpace = undefined;
+    for (let key in col) {
+      if (!lastSpace) {
+        lastSpace = col[key];
+      } else if (col[key] !== 'white' && col[key] === lastSpace) {
+        count++;
+        lastSpace = col[key]
+      } else {
+        count = 1;
+        lastSpace = col[key]
+      }
+      if (count > 3) {
+        console.log("Winner!");
+        return true;
+      }
+    }
+    return false;
+  }
+
+  checkHorizontalMatch(row) {
+    let count = 0;
+
+    for (let i = 0; i < 8; i++) {
+      if (!lastSpace) {
+        lastSpace = col[key];
+      } else if (col[key] !== 'white' && col[key] === lastSpace) {
+        count++;
+        lastSpace = col[key]
+      } else {
+        count = 1;
+        lastSpace = col[key]
+      }
+      if (count > 3) {
+        console.log("Winner!");
+        return true;
+      }
+    }
+    return false;
+  }
+
+  togglePiece(col) {
     console.log(`.togglePiece col: ${JSON.stringify(col)}`);
     let token = this.nextPiece;
     for (let key in col) {
       if(col[key] !== 'white') {
         console.log(`Toggling key ${key}`);
-        col[key - 1] = token;
-        return;
+        let tokenPos = key - 1;
+        col[tokenPos] = token;
+        return tokenPos;
       } else if (key === '7') {
         console.log(`Toggling last key: ${key}`);
-        col[key] = token;
-        return;
+        let tokenPos = key
+        col[tokenPos] = token;
+        return tokenPos;
       }
     }
   } 
@@ -45,6 +102,7 @@ class Board {
     let colName = `col${x}`;
     return this.board[colName];
   }
+
 }
 
 export default Board;

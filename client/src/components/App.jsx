@@ -8,20 +8,25 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      tokenColor: 'red',
-      board: gameBoard.board
+      board: gameBoard.board,
+      winner: false
     }
     this.onClickHandler = this.onClickHandler.bind(this);
   }
 
   onClickHandler(event) {
-    let col = event.target.getAttribute('x');
-    gameBoard.togglePiece(col);
+    let x = event.target.getAttribute('x');
+    let piecePos = { x: x };
+    let col = gameBoard.getColumn(x);
+    piecePos.y = gameBoard.togglePiece(col);
     gameBoard.toggleTokenColor();
     this.setState({ board: gameBoard.board})
+    if(gameBoard.checkWinner(piecePos)) {
+      this.setState({ winner: true });
+    }
   }
 
-  render() {
+  renderBoard() {
     let {
       col0,
       col1,
@@ -30,7 +35,7 @@ class App extends Component {
       col4,
       col5,
       col6,
-      col7
+      col7,
     } = this.state.board;
 
     return (
@@ -45,6 +50,22 @@ class App extends Component {
         <Column onClick={this.onClickHandler} x="7" state={col7}/>
       </div>
     )
+  }
+
+  render() {
+    let { winner } = this.state;
+
+    if(winner) {
+      return (
+        <div>
+          <h1>MATCH FOUR!  GAME OVER!</h1>
+          {this.renderBoard()}
+        </div>
+      )
+    } else {
+      return this.renderBoard();
+    }
+    
   }
 }
 
